@@ -831,7 +831,7 @@ Each automatic query method must be assigned an entity type. The rules for infer
 
 Jakarta Data infers a query based on the parameters of the method. Each parameter must either:
 
-- have exactly the same type and name as a persistent field or property of the entity class, or
+- have exactly the same name as a persistent field or property of the entity class and be of type `T`, `T[]`, or `List<T>` where `T` is the type of the field or property, or
 - be of type `Limit`, `Order`, `PageRequest`, or `Sort`.
 
 Parameter names map parameters to persistent fields. A repository with parameter-based automatic query methods must either:
@@ -850,6 +850,9 @@ For example:
 
 @Find
 Book bookByIsbn(String isbn);
+
+@Find
+List<Book> booksByIsbn(@By("isbn") String[] isbns);
 
 @Find
 List<Book> booksByYear(Year year, Sort order, Limit limit);

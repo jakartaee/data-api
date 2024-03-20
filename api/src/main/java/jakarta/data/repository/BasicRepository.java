@@ -190,7 +190,8 @@ public interface BasicRepository<T, K> extends DataRepository<T, K> {
      * ids.
      * @throws NullPointerException in case the given {@link Iterable ids} or one of its items is {@code null}.
      */
-    Stream<T> findByIdIn(Iterable<K> ids);
+    @Find
+    Stream<T> findByIdIn(@By(ID) List<K> ids);
 
     /**
      * Deletes the entity with the given Id.
@@ -224,7 +225,8 @@ public interface BasicRepository<T, K> extends DataRepository<T, K> {
      * @param ids must not be {@code null}. Must not contain {@code null} elements.
      * @throws NullPointerException when the iterable is {@code null} or contains {@code null} elements.
      */
-    void deleteByIdIn(Iterable<K> ids);
+    @Delete
+    void deleteByIdIn(@By(ID) List<K> ids);
 
     /**
      * Deletes the given entities. Deletion of each entity is performed by matching the unique identifier,
