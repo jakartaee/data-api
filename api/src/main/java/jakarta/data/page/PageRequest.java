@@ -37,20 +37,25 @@ import java.util.Optional;
  * example:</p>
  *
  * <pre>
+ * &#64;Find
  * &#64;OrderBy("age")
  * &#64;OrderBy("ssn")
- * Person[] findByAgeBetween(int minAge, int maxAge, PageRequest pageRequest);
+ * Person[] agedBetween(&#64;By("age") &#64;Is(GreaterThanEqual) int minAge,
+ *                      &#64;By("age") &#64;Is(LessThanEqual) int maxAge,
+ *                      PageRequest pageRequest);
  * </pre>
  *
  * <p>This method might be called as follows:</p>
  *
  * <pre>
- * var page = people.findByAgeBetween(35, 59,
+ * var page = people.agedBetween(
+ *                35, 59,
  *                PageRequest.ofSize(100));
  * var results = page.content();
  * ...
  * while (page.hasNext()) {
- *     page = people.findByAgeBetween(35, 59,
+ *     page = people.agedBetween(
+ *                35, 59,
  *                page.nextPageRequest().withoutTotal());
  *     results = page.content();
  *   ...

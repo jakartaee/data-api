@@ -55,23 +55,26 @@ import java.util.NoSuchElementException;
  * query parameters) of type {@link PageRequest}, for example:</p>
  *
  * <pre>
- * &#64;OrderBy("lastName")
- * &#64;OrderBy("firstName")
- * &#64;OrderBy("id")
- * CursoredPage&lt;Employee&gt; findByHoursWorkedGreaterThan(int hours, PageRequest pageRequest);
+ * &#64;Find
+ * &#64;OrderBy(_Employee.LASTNAME)
+ * &#64;OrderBy(_Employee.FIRSTNAME)
+ * &#64;OrderBy(_Employee.ID)
+ * CursoredPage&lt;Employee&gt; withOvertime(
+ *         &#64;By(_Employee.HOURSWORKED) &#64;Is(GreaterThan) int fullTimeHours,
+ *         PageRequest pageRequest);
  * </pre>
  *
  * <p>In initial page may be requested using an offset-based page request:</p>
  *
  * <pre>
- * page = employees.findByHoursWorkedGreaterThan(1500, PageRequest.ofSize(50));
+ * page = employees.withOvertime(40, PageRequest.ofSize(50));
  * </pre>
  *
  * <p>The next page may be requested relative to the end of the current page,
  * as follows:</p>
  *
  * <pre>
- * page = employees.findByHoursWorkedGreaterThan(1500, page.nextPageRequest());
+ * page = employees.withOvertime(40, page.nextPageRequest());
  * </pre>
  *
  * <p>Here, the instance of {@link PageRequest} returned by
@@ -92,7 +95,7 @@ import java.util.NoSuchElementException;
  *         PageRequest.ofPage(5)
  *                    .size(50)
  *                    .afterCursor(Cursor.forKey(emp.lastName, emp.firstName, emp.id));
- * page = employees.findByHoursWorkedGreaterThan(1500, pageRequest);
+ * page = employees.withOvertime(40, pageRequest);
  * </pre>
  *
  * <p>By making the query for the next page relative to observed values,

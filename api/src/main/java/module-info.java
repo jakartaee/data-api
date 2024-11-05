@@ -28,6 +28,7 @@ import jakarta.data.repository.DataRepository;
 import jakarta.data.repository.Delete;
 import jakarta.data.repository.Find;
 import jakarta.data.repository.Insert;
+import jakarta.data.repository.Is;
 import jakarta.data.repository.OrderBy;
 import jakarta.data.repository.Param;
 import jakarta.data.repository.Query;
@@ -69,8 +70,11 @@ import java.util.Set;
  *     &#64;Insert
  *     void create(Product prod);
  *
+ *     &#64;Find
  *     &#64;OrderBy("price")
- *     List&lt;Product&gt; findByNameIgnoreCaseLikeAndPriceLessThan(String namePattern, float max);
+ *     List&lt;Product&gt; search(
+ *             &#64;By("name") &#64;Is(LikeIgnoreCase) String namePattern,
+ *             &#64;By("price") &#64;Is(LessThanEqual) float max);
  *
  *     &#64;Query("UPDATE Product SET price = price * (1.0 - ?1) WHERE yearProduced &lt;= ?2")
  *     int discountOldInventory(float rateOfDiscount, int maxYear);
@@ -90,7 +94,7 @@ import java.util.Set;
  * ...
  * products.create(newProduct);
  *
- * found = products.findByNameIgnoreCaseLikeAndPriceLessThan("%cell%phone%", 900.0f);
+ * found = products.search("%cell%phone%", 900.0f);
  *
  * numDiscounted = products.discountOldInventory(0.15f, Year.now().getValue() - 1);
  * </pre>
@@ -149,8 +153,10 @@ import java.util.Set;
  *
  * &#64;Repository
  * public interface Purchases {
+ *     &#64;Find
  *     &#64;OrderBy("address.zipCode")
- *     List&lt;Purchase&gt; findByAddressZipCodeIn(List&lt;Integer&gt; zipCodes);
+ *     List&lt;Purchase&gt; forZipCodes(
+ *             &#64;By("address.zipCode") &#64;Is(In) List&lt;Integer&gt; zipCodes);
  *
  *     &#64;Query("WHERE address.zipCode = ?1")
  *     List&lt;Purchase&gt; forZipCode(int zipCode);
@@ -710,20 +716,29 @@ import java.util.Set;
  * with the {@code -parameters} compiler option so that parameter names are
  * available at runtime.</p>
  *
- * <p>Each parameter determines a query condition, and each such condition
- * is an equality condition. All conditions must match for a record to
+ * <p>Each parameter determines a query condition. By default, each such condition
+ * is an equality condition. The {@link Is} annotation can be combined with the
+ * {@link By} annotation to request other types of basic comparisons for a
+ * repository method parameter. All conditions must match for a record to
  * satisfy the query.</p>
  *
  * <pre>
  * &#64;Find
  * &#64;OrderBy("lastName")
  * &#64;OrderBy("firstName")
- * List&lt;Person&gt; peopleByAgeAndNationality(int age, Country nationality);
+ * List&lt;Person&gt; ofNationalityAndOlderThan(
+ *         Country nationality,
+ *         &#64;By("age") &#64;Is(GreaterThan) int minAge);
  * </pre>
  *
  * <pre>
  * &#64;Find
  * Optional&lt;Person&gt; person(String ssn);
+ * </pre>
+ *
+ * <pre>
+ * &#64;Delete
+ * void remove(&#64;By("status") &#64;Is(In) List&lt;Status&gt; list);
  * </pre>
  *
  * <p>The {@code _} character may be used in a method parameter name to
@@ -741,11 +756,19 @@ import java.util.Set;
  *
  * <pre>
  * // Query by Method Name
- * Vehicle[] findByMakeAndModelAndYear(String makerName, String model, int year, Sort&lt;?&gt;... sorts);
+ * Vehicle[] findByMakeAndModelAndYearBetween(String makerName,
+ *                                            String model,
+ *                                            int minYear,
+ *                                            int maxYear,
+ *                                            Sort&lt;?&gt;... sorts);
  *
  * // parameter-based conditions
  * &#64;Find
- * Vehicle[] searchFor(String make, String model, int year, Sort&lt;?&gt;... sorts);
+ * Vehicle[] search(String make,
+ *                  String model,
+ *                  &#64;By(_Vehicle.YEAR) &#64;Is(GreaterThanEqual) int minYear,
+ *                  &#64;By(_Vehicle.YEAR) &#64;Is(LessThanEqual) int maxYear,
+ *                  Sort&lt;?&gt;... sorts);
  * </pre>
  *
  * <p>For further information, refer to the {@linkplain Find API documentation}
@@ -783,11 +806,13 @@ import java.util.Set;
  * allows its results to be split and retrieved in pages. For example,</p>
  *
  * <pre>
- * Product[] findByNameLikeOrderByAmountSoldDescIdAsc(
- *                 String pattern, PageRequest pageRequest);
+ * &#64;Find
+ * &#64;OrderBy(value = _Product.AMOUNT_SOLD, descending = true)
+ * &#64;OrderBy(ID)
+ * Product[] named(&#64;By(_Product.NAME) &#64;Is(LikeIgnoreCase) String pattern,
+ *                 PageRequest pageRequest);
  * ...
- * page1 = products.findByNameLikeOrderByAmountSoldDescIdAsc(
- *                 "%phone%", PageRequest.ofSize(20));
+ * page1 = products.named("%phone%", PageRequest.ofSize(20));
  * </pre>
  *
  * <p>When using pagination, always ensure that the ordering is consistent
@@ -801,16 +826,17 @@ import java.util.Set;
  * For example,</p>
  *
  * <pre>
- * Product[] findByNameLikeAndPriceBetween(String pattern,
- *                                         float minPrice,
- *                                         float maxPrice,
- *                                         PageRequest pageRequest,
- *                                         Order&lt;Product&gt; order);
+ * &#64;Find
+ * Product[] search(&#64;By("name") &#64;Is(LikeIgnoreCase) String pattern,
+ *                  &#64;By("price") &#64;Is(GreaterThanEqual) float minPrice,
+ *                  &#64;By("price") &#64;Is(LessThanEqual) float maxPrice,
+ *                  PageRequest pageRequest,
+ *                  Order&lt;Product&gt; order);
  *
  * ...
  * PageRequest page1Request = PageRequest.ofSize(25);
  *
- * page1 = products.findByNameLikeAndPriceBetween(
+ * page1 = products.search(
  *                 namePattern, minPrice, maxPrice, page1Request,
  *                 Order.by(Sort.desc("price"), Sort.asc("id"));
  * </pre>
@@ -820,13 +846,17 @@ import java.util.Set;
  * of {@link Sort} and passed to the repository find method. For example,</p>
  *
  * <pre>
- * Product[] findByNameLike(String pattern, Limit max, Order&lt;Product&gt; sortBy);
+ * &#64;Find
+ * Product[] named(&#64;By("name") &#64;Is(LikeIgnoreCase) String pattern,
+ *                 Limit max,
+ *                 Order&lt;Product&gt; sortBy);
  *
  * ...
- * found = products.findByNameLike(namePattern, Limit.of(25),
- *                                 Order.by(Sort.desc("price"),
- *                                          Sort.desc("amountSold"),
- *                                          Sort.asc("id")));
+ * found = products.named(namePattern,
+ *                        Limit.of(25),
+ *                        Order.by(Sort.desc("price"),
+ *                                 Sort.desc("amountSold"),
+ *                                 Sort.asc("id")));
  * </pre>
  *
  * <p>Generic, untyped {@link Sort} criteria can be supplied directly to a
@@ -834,13 +864,17 @@ import java.util.Set;
  * For example,</p>
  *
  * <pre>
- * Product[] findByNameLike(String pattern, Limit max, {@code Sort<?>...} sortBy);
+ * &#64;Find
+ * Product[] named(&#64;By("name") &#64;Is(LikeIgnoreCase) String pattern,
+ *                 Limit max,
+ *                 {@code Sort<?>...} sortBy);
  *
  * ...
- * found = products.findByNameLike(namePattern, Limit.of(25),
- *                                 Sort.desc("price"),
- *                                 Sort.desc("amountSold"),
- *                                 Sort.asc("name"));
+ * found = products.named(namePattern,
+ *                        Limit.of(25),
+ *                        Sort.desc("price"),
+ *                        Sort.desc("amountSold"),
+ *                        Sort.asc("name"));
  * </pre>
  *
  * <h2>Repository default methods</h2>
