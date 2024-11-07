@@ -60,7 +60,7 @@ import java.util.NoSuchElementException;
  * &#64;OrderBy(_Employee.FIRSTNAME)
  * &#64;OrderBy(_Employee.ID)
  * CursoredPage&lt;Employee&gt; withOvertime(
- *         &#64;By(_Employee.HOURSWORKED) &#64;Is(GreaterThan) int fullTimeHours,
+ *         &#64;By(_Employee.HOURSWORKED) &#64;Is(GREATER_THAN) int fullTimeHours,
  *         PageRequest pageRequest);
  * </pre>
  *

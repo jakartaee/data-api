@@ -64,7 +64,7 @@ import java.lang.annotation.Target;
  * <pre>
  * &#64;Find
  * &#64;OrderBy(value = _Product.PRICE, descending = true)
- * {@code Stream<Product>} pricedBelow(&#64;By(_Product.PRICE) &#64;Is(LessThan) double maxPrice);
+ * {@code Stream<Product>} pricedBelow(&#64;By(_Product.PRICE) &#64;Is(LESS_THAN) double maxPrice);
  * </pre>
  *
  * <p>A repository method with an {@code @OrderBy} annotation must not
@@ -118,7 +118,7 @@ public @interface OrderBy {
      * <pre>
      * &#64;Find
      * &#64;OrderBy("age")
-     * Stream&lt;Person&gt; withLastName(&#64;By("lastName") &#64;Is(IgnoreCase) String surname);
+     * Stream&lt;Person&gt; withLastName(&#64;By("lastName") &#64;Is(IGNORE_CASE) String surname);
      * </pre>
      *
      * @return entity attribute name.

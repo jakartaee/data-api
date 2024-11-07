@@ -40,8 +40,8 @@ import java.util.Optional;
  * &#64;Find
  * &#64;OrderBy("age")
  * &#64;OrderBy("ssn")
- * Person[] agedBetween(&#64;By("age") &#64;Is(GreaterThanEqual) int minAge,
- *                      &#64;By("age") &#64;Is(LessThanEqual) int maxAge,
+ * Person[] agedBetween(&#64;By("age") &#64;Is(GREATER_THAN_EQ) int minAge,
+ *                      &#64;By("age") &#64;Is(LESS_THAN_EQ) int maxAge,
  *                      PageRequest pageRequest);
  * </pre>
  *

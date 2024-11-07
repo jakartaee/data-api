@@ -73,8 +73,8 @@ import java.util.Set;
  *     &#64;Find
  *     &#64;OrderBy("price")
  *     List&lt;Product&gt; search(
- *             &#64;By("name") &#64;Is(LikeIgnoreCase) String namePattern,
- *             &#64;By("price") &#64;Is(LessThanEqual) float max);
+ *             &#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String namePattern,
+ *             &#64;By("price") &#64;Is(lESS_THAN_EQ) float max);
  *
  *     &#64;Query("UPDATE Product SET price = price * (1.0 - ?1) WHERE yearProduced &lt;= ?2")
  *     int discountOldInventory(float rateOfDiscount, int maxYear);
@@ -156,7 +156,7 @@ import java.util.Set;
  *     &#64;Find
  *     &#64;OrderBy("address.zipCode")
  *     List&lt;Purchase&gt; forZipCodes(
- *             &#64;By("address.zipCode") &#64;Is(In) List&lt;Integer&gt; zipCodes);
+ *             &#64;By("address.zipCode") &#64;Is(IN) List&lt;Integer&gt; zipCodes);
  *
  *     &#64;Query("WHERE address.zipCode = ?1")
  *     List&lt;Purchase&gt; forZipCode(int zipCode);
@@ -728,7 +728,7 @@ import java.util.Set;
  * &#64;OrderBy("firstName")
  * List&lt;Person&gt; ofNationalityAndOlderThan(
  *         Country nationality,
- *         &#64;By("age") &#64;Is(GreaterThan) int minAge);
+ *         &#64;By("age") &#64;Is(GREATER_THAN) int minAge);
  * </pre>
  *
  * <pre>
@@ -738,7 +738,7 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Delete
- * void remove(&#64;By("status") &#64;Is(In) List&lt;Status&gt; list);
+ * void remove(&#64;By("status") &#64;Is(IN) List&lt;Status&gt; list);
  * </pre>
  *
  * <p>The {@code _} character may be used in a method parameter name to
@@ -766,8 +766,8 @@ import java.util.Set;
  * &#64;Find
  * Vehicle[] search(String make,
  *                  String model,
- *                  &#64;By(_Vehicle.YEAR) &#64;Is(GreaterThanEqual) int minYear,
- *                  &#64;By(_Vehicle.YEAR) &#64;Is(LessThanEqual) int maxYear,
+ *                  &#64;By(_Vehicle.YEAR) &#64;Is(GREATER_THAN_EQ) int minYear,
+ *                  &#64;By(_Vehicle.YEAR) &#64;Is(LESS_THAN_EQ) int maxYear,
  *                  Sort&lt;?&gt;... sorts);
  * </pre>
  *
@@ -809,7 +809,7 @@ import java.util.Set;
  * &#64;Find
  * &#64;OrderBy(value = _Product.AMOUNT_SOLD, descending = true)
  * &#64;OrderBy(ID)
- * Product[] named(&#64;By(_Product.NAME) &#64;Is(LikeIgnoreCase) String pattern,
+ * Product[] named(&#64;By(_Product.NAME) &#64;Is(LIKE_IGNORE_CASE) String pattern,
  *                 PageRequest pageRequest);
  * ...
  * page1 = products.named("%phone%", PageRequest.ofSize(20));
@@ -827,9 +827,9 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Find
- * Product[] search(&#64;By("name") &#64;Is(LikeIgnoreCase) String pattern,
- *                  &#64;By("price") &#64;Is(GreaterThanEqual) float minPrice,
- *                  &#64;By("price") &#64;Is(LessThanEqual) float maxPrice,
+ * Product[] search(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String pattern,
+ *                  &#64;By("price") &#64;Is(GREATER_THAN_EQ) float minPrice,
+ *                  &#64;By("price") &#64;Is(LESS_THAN_EQ) float maxPrice,
  *                  PageRequest pageRequest,
  *                  Order&lt;Product&gt; order);
  *
@@ -847,7 +847,7 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Find
- * Product[] named(&#64;By("name") &#64;Is(LikeIgnoreCase) String pattern,
+ * Product[] named(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String pattern,
  *                 Limit max,
  *                 Order&lt;Product&gt; sortBy);
  *
@@ -865,7 +865,7 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Find
- * Product[] named(&#64;By("name") &#64;Is(LikeIgnoreCase) String pattern,
+ * Product[] named(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String pattern,
  *                 Limit max,
  *                 {@code Sort<?>...} sortBy);
  *
