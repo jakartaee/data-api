@@ -73,7 +73,7 @@ import java.util.Set;
  *     &#64;Find
  *     &#64;OrderBy("price")
  *     List&lt;Product&gt; search(
- *             &#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String namePattern,
+ *             &#64;By("name") &#64;Is(LIKE_ANY_CASE) String namePattern,
  *             &#64;By("price") &#64;Is(lESS_THAN_EQ) float max);
  *
  *     &#64;Query("UPDATE Product SET price = price * (1.0 - ?1) WHERE yearProduced &lt;= ?2")
@@ -809,7 +809,7 @@ import java.util.Set;
  * &#64;Find
  * &#64;OrderBy(value = _Product.AMOUNT_SOLD, descending = true)
  * &#64;OrderBy(ID)
- * Product[] named(&#64;By(_Product.NAME) &#64;Is(LIKE_IGNORE_CASE) String pattern,
+ * Product[] named(&#64;By(_Product.NAME) &#64;Is(LIKE_ANY_CASE) String pattern,
  *                 PageRequest pageRequest);
  * ...
  * page1 = products.named("%phone%", PageRequest.ofSize(20));
@@ -827,7 +827,7 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Find
- * Product[] search(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String pattern,
+ * Product[] search(&#64;By("name") &#64;Is(LIKE_ANY_CASE) String pattern,
  *                  &#64;By("price") &#64;Is(GREATER_THAN_EQ) float minPrice,
  *                  &#64;By("price") &#64;Is(LESS_THAN_EQ) float maxPrice,
  *                  PageRequest pageRequest,
@@ -847,7 +847,7 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Find
- * Product[] named(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String pattern,
+ * Product[] named(&#64;By("name") &#64;Is(LIKE_ANY_CASE) String pattern,
  *                 Limit max,
  *                 Order&lt;Product&gt; sortBy);
  *
@@ -865,7 +865,7 @@ import java.util.Set;
  *
  * <pre>
  * &#64;Find
- * Product[] named(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String pattern,
+ * Product[] named(&#64;By("name") &#64;Is(LIKE_ANY_CASE) String pattern,
  *                 Limit max,
  *                 {@code Sort<?>...} sortBy);
  *

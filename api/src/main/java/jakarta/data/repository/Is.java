@@ -25,8 +25,10 @@ import java.lang.annotation.Target;
 /**
  * <p>Annotates a parameter of a repository {@link Find} or {@link Delete} method,
  * indicating how a persistent field is compared against the parameter's value.
- * The {@link By} annotation is used on the same parameter to identify the
- * persistent field.</p>
+ * The {@link By} annotation can be used on the same parameter to identify the
+ * persistent field. Otherwise, if the {@code -parameters} compile option is
+ * enabled, the the persistent field is inferred by matching the name of the
+ * method parameter.</p>
  *
  * <p>For example,</p>
  *
@@ -40,7 +42,7 @@ import java.lang.annotation.Target;
  *
  *     // Find a page of Product entities where the name field matches a pattern, ignoring case.
  *     &#64;Find
- *     Page&lt;Product&gt; search(&#64;By(_Product.NAME) &#64;Is(LIKE_IGNORE_CASE) String pattern,
+ *     Page&lt;Product&gt; search(&#64;By(_Product.NAME) &#64;Is(LIKE_ANY_CASE) String pattern,
  *                          PageRequest pagination,
  *                          Order&lt;Product&gt; order);
  *
@@ -53,28 +55,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Is {
-    // TODO add JavaDoc with examples to these
-    String EQUAL                = "EQUAL";
-    String GREATER_THAN         = "GREATER_THAN";
-    String GREATER_THAN_EQ      = "GREATER_THAN_EQ";
-    String IGNORE_CASE          = "IGNORE_CASE";
-    String IN                   = "IN";
-    String LESS_THAN            = "LESS_THAN";
-    String LESS_THAN_EQ         = "LESS_THAN_EQ";
-    String LIKE                 = "LIKE";
-    String LIKE_IGNORE_CASE     = "LIKE_IGNORE_CASE";
-    String NOT                  = "NOT";
-    String NOT_IGNORE_CASE      = "NOT_IGNORE_CASE";
-    String NOT_IN               = "NOT_IN";
-    String NOT_LIKE             = "NOT_LIKE";
-    String NOT_LIKE_IGNORE_CASE = "NOT_LIKE_IGNORE_CASE";
 
     /**
      * <p>The type of comparison operation to use when comparing a persistent
-     * field against a value that is supplied to a repository method.
-     * For portable applications, the comparison operation must be one of the
-     * constants defined within this class. Jakarta Data providers might choose
-     * to provide their own constants as non-portable extensions.</p>
+     * field against a value that is supplied to a repository method..</p>
      *
      * <p>The following example compares the year a person was born against
      * a minimum and maximum year that are supplied as parameters to a repository
@@ -83,7 +67,7 @@ public @interface Is {
      * <pre>
      * &#64;Find
      * &#64;OrderBy(_Person.YEAR_BORN)
-     * List&lt;Person&gt; bornWithin(&#64;By(_Person.YEAR_BORN) &#64;Is(TREATER_THAN_EQ) float minYear,
+     * List&lt;Person&gt; bornWithin(&#64;By(_Person.YEAR_BORN) &#64;Is(GREATER_THAN_EQ) float minYear,
      *                         &#64;By(_Person.YEAR_BORN) &#64;Is(LESS_THAN_EQ) float maxYear);
      * </pre>
      *
@@ -94,10 +78,54 @@ public @interface Is {
      * statically import one or more constants from this class. For example:</p>
      *
      * <pre>
-     * import static jakarta.data.repository.Is.*;
+     * import static jakarta.data.repository.Is.Op.*;
      * </pre>
      *
      * @return the type of comparison operation.
      */
-    String value() default EQUAL;
+    Op value() default Op.EQUAL;
+
+    /**
+     * <p>Comparison operations for the {@link Is} annotation.</p>
+     *
+     * <p>For more concise code, it can be convenient to statically import one
+     * or more comparison operations. For example:</p>
+     *
+     * <pre>
+     * import static jakarta.data.repository.Is.Op.*;
+     * </pre>
+     */
+    public static enum Op {
+        // TODO add JavaDoc with examples to these
+        ANY_CASE,
+        EQUAL,
+        GREATER_THAN,
+        GREATER_THAN_ANY_CASE,
+        GREATER_THAN_EQ,
+        GREATER_THAN_EQ_ANY_CASE,
+        IN,
+        LESS_THAN,
+        LESS_THAN_ANY_CASE,
+        LESS_THAN_EQ,
+        LESS_THAN_EQ_ANY_CASE,
+        LIKE,
+        LIKE_ANY_CASE,
+        PREFIXED,
+        PREFIXED_ANY_CASE,
+        SUBSTRINGED,
+        SUBSTRINGED_ANY_CASE,
+        SUFFIXED,
+        SUFFIXED_ANY_CASE,
+        NOT,
+        NOT_ANY_CASE,
+        NOT_IN,
+        NOT_LIKE,
+        NOT_LIKE_ANY_CASE,
+        NOT_PREFIXED,
+        NOT_PREFIXED_ANY_CASE,
+        NOT_SUBSTRINGED,
+        NOT_SUBSTRINGED_ANY_CASE,
+        NOT_SUFFIXED,
+        NOT_SUFFIXED_ANY_CASE;
+    }
 }

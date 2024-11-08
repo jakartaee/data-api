@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  *
  *     &#64;Find
  *     &#64;OrderBy("price")
- *     List&lt;Product&gt; named(&#64;By("name") &#64;Is(LIKE_IGNORE_CASE) String namePattern);
+ *     List&lt;Product&gt; named(&#64;By("name") &#64;Is(LIKE_ANY_CASE) String namePattern);
  *
  *     &#64;Query("UPDATE Product SET price = price - (price * ?1) WHERE price * ?1 &lt;= ?2")
  *     int putOnSale(float rateOfDiscount, float maxDiscount);
