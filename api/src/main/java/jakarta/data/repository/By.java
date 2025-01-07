@@ -33,7 +33,10 @@ import java.lang.annotation.Target;
  *     to the unique identifier field or property.
  * </ul>
  * <p>Arguments to the annotated parameter are compared to values of the
- * mapped persistent field.</p>
+ * mapped persistent field. The equality comparison is used by default.<p>
+ *
+ * <p>For other types of basic comparisons, include the {@link Is} annotation.</p>
+ *
  * <p>The field name may be a compound name like {@code address.city}.</p>
  *
  * <p>For example, for a {@code Person} entity with attributes {@code ssn},
