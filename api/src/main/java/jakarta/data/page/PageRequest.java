@@ -31,7 +31,7 @@ import java.util.Optional;
  * <p>A query method of a repository may have a parameter of type
  * {@code PageRequest} if its return type indicates that it may return
  * multiple entities, that is, if its return type is an array type,
- * {@code List}, {@code Stream}, {@link Page}, or {@link CursoredPage}.
+ * {@link List}, {@code Stream}, {@link Page}, or {@link CursoredPage}.
  * The parameter of type {@code PageRequest} must occur after the method
  * parameters representing regular parameters of the query itself. For
  * example:</p>
@@ -67,7 +67,6 @@ import java.util.Optional;
  * </ul>
  */
 public interface PageRequest {
-
 
     /**
      * Creates a new page request with the given page number and with a default size of 10.
@@ -243,7 +242,6 @@ public interface PageRequest {
      */
     PageRequest size(int maxPageSize);
 
-
     /**
      * Returns an otherwise-equivalent page request with
      * {@link #requestTotal()} set to {@code false}, so that
@@ -259,7 +257,7 @@ public interface PageRequest {
 
     /**
      * Returns an otherwise-equivalent page request with
-     * {@link #requestTotal()} set to {@code false}, so that
+     * {@link #requestTotal()} set to {@code true}, so that
      * totals will be retrieved from the database.
      * @return a page request with {@link #requestTotal()}
      *         set to {@code true}.
