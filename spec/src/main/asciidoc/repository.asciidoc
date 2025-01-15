@@ -1,4 +1,4 @@
-// Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
+// Copyright (c) 2022,2025 Contributors to the Eclipse Foundation
 //
 // This program and the accompanying materials are made available under the
 // terms of the Eclipse Public License v. 2.0 which is available at
@@ -40,7 +40,7 @@ A superinterface of a repository interface must either:
 
 A Jakarta Data implementation must treat abstract methods inherited by a repository interface as if they were directly declared by the repository interface.
 
-Repositories perform operations on entities. For repository methods that are annotated with `@Insert`, `@Update`, `@Save`, or `@Delete`, the entity type is determined from the method parameter type.  For `find` and `delete` methods where the return type is an entity, array of entity, or parameterized type such as `List<MyEntity>` or `Page<MyEntity>`, the entity type is determined from the method return type.  For `count`, `exists`, and other `delete` methods that do not return the entity or accept the entity as a parameter, the entity type cannot be determined from the method signature and a _primary entity type_ must be defined for the repository.
+Repositories perform operations on entities. For repository methods that are annotated with `@Insert`, `@Update`, `@Save`, or `@Delete`, the entity type is determined from the method parameter type. For repository methods that are annotated with `@Find`, the entity type is determined by the annotation `value` member, if an entity type is explicitly specified. Otherwise, for `find` and `delete` methods where the return type is an entity, array of entity, or parameterized type such as `List<MyEntity>` or `Page<MyEntity>`, the entity type is determined from the method return type.  For `count`, `exists`, and other `find` and `delete` methods that do not return the entity or accept the entity as a parameter, the entity type cannot be determined from the method signature and a _primary entity type_ must be defined for the repository.
 
 Users of Jakarta Data declare a primary entity type for a repository by inheriting from a built-in repository super interface, such as `BasicRepository`, and specifying the primary entity type as the first type variable. For repositories that do not inherit from a super interface with a type parameter to indicate the primary entity type, lifecycle methods on the repository determine the primary entity type. To do so, all lifecycle methods where the method parameter is a type, an array of type, or is parameterized with a type that is annotated as an entity, must correspond to the same entity type. The primary entity type is assumed for methods that do not otherwise specify an entity type, such as `countByPriceLessThan`. Methods that require a primary entity type raise `MappingException` if a primary entity type is not provided.
 
@@ -587,6 +587,7 @@ Other types of updates to data, however, will cause duplicate or missed results.
 ===== Restrictions on use of Cursor-based Pagination
 
 * The repository method signature must return `CursoredPage`. A repository method with return type of `CursoredPage` must raise `UnsupportedOperationException` if the database is incapable of cursor-based pagination.
+* The contents of the `CursoredPage` returned by the repository method must be entities, not entity attributes, records containing a subset of entity attributes, or any other values that are not the entity itself.
 * The repository method signature must accept a `PageRequest` parameter.
 * Sort criteria must be provided and should be minimal.
 * The combination of provided sort criteria must uniquely identify each entity such that the sort criteria defines a deterministic ordering of entities.

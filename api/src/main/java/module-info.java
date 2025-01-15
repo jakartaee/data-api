@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022,2025 Contributors to the Eclipse Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import jakarta.data.repository.Param;
 import jakarta.data.repository.Query;
 import jakarta.data.repository.Repository;
 import jakarta.data.repository.Save;
+import jakarta.data.repository.Select;
 import jakarta.data.repository.Update;
 
 import java.util.Set;
@@ -843,6 +844,48 @@ import java.util.Set;
  *                                 Sort.asc("name"));
  * </pre>
  *
+ * <h2>Returning subsets of entity attributes</h2>
+ *
+ * <p>In addition to retrieving results that are entities, repository find methods
+ * can be written to retrieve single entity attribute results, as well as
+ * multiple entity attribute results (represented as a Java record).</p>
+ *
+ * <h3>Single entity attribute result type</h3>
+ *
+ * <p>The {@link Select} annotation chooses the entity attribute.
+ * The result type within the repository method return type must be consistent
+ * with the entity attribute type. For example, if a {@code Person} entity
+ * has attributes including {@code year}, {@code month}, {@code day}, and
+ * {@code precipitation}, of which the latter is of type {@code float},</p>
+ *
+ * <pre>
+ * &#64;Find(Weather.class)
+ * &#64;Select("precipitation")
+ * &#64;OrderBy("precipitation")
+ * List&lt;Float&gt; precipitationIn(&#64;By("month") Month monthOfYear,
+ *                             &#64;By("year") int year);
+ * </pre>
+ *
+ * <h3>Multiple entity attributes result type</h3>
+ *
+ * <p>The repository method return type includes a Java record to represent a
+ * subset of entity attributes. If the record component names do not match the
+ * entity attribute names, use the {@link Select} annotation to indicate the
+ * entity attribute name. For example, if a {@code Person} entity has attributes
+ * {@code ssn}, {@code firstName}, {@code middleName}, and {@code lastName},</p>
+ *
+ * <pre>
+ * public record Name(String firstName,
+ *                    String middleName,
+ *                    &#64;Select("lastName") String surname) {}
+ *
+ * &#64;Find(Person.class)
+ * Optional&lt;Name&gt; getName(&#64;By("ssn") long socialSecurityNum);
+ * </pre>
+ *
+ * <p>The entity class value that is supplied to the {@link Find} annotation can
+ * be omitted if it is the same as the primary entity type of the repository.</p>
+ *
  * <h2>Repository default methods</h2>
  *
  * <p>A repository interface may declare any number of {@code default} methods
@@ -938,6 +981,8 @@ import java.util.Set;
  *     as an entity, such as {@code MyEntity}, {@code MyEntity[]}, or
  *     {@code List<MyEntity>}, the entity type is determined by the method
  *     parameter type.</li>
+ * <li>For repository methods annotated with {@link Find} where the
+ *     {@link Find#value value} is a valid entity class.</li>
  * <li>For {@code find} and {@code delete} methods where the return type is
  *     a type, an array of a type, or is parameterized with a type annotated
  *     as an entity, such as {@code MyEntity}, {@code MyEntity[]}, or
